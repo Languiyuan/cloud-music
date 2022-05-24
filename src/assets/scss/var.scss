@@ -1,0 +1,9 @@
+$define-color: #e5e;
+$text-main-color: #2d2d2d;
+$text-hightLight: #ff641e;
+
+$main-width: 1610px;
+
+@function calc-height($width, $w, $h) {
+  @return calc(($width * $h) / $w);
+}

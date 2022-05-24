@@ -1,0 +1,7 @@
+//  溢出不显示不换行，用省略号来表示
+@mixin ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+}

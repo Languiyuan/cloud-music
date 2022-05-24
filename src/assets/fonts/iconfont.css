@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3375877 */
+  src: url('iconfont.woff2?t=1653316137334') format('woff2'),
+       url('iconfont.woff?t=1653316137334') format('woff'),
+       url('iconfont.ttf?t=1653316137334') format('truetype');
+}
+
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Sidebar-icon */
+.icon-index:before {
+  content: "\e63f";
+}
+
+.icon-rank:before {
+  content: "\e629";
+}
+
+.icon-playlist:before {
+  content: "\e636";
+}
+
+.icon-mvlist:before {
+  content: "\e608";
+}
+
+.icon-artist:before {
+  content: "\e601";
+}
+
+.icon-my:before {
+  content: "\e625";
+}
+
+/* 图片占位符 */
+.icon-image:before {
+  content: "\e67f";
+}
+
+/* hot-playlist */
+.icon-headset:before {
+  content: "\e60e";
+}
+
+/* rank-list */
+.icon-favorite:before {
+  content: "\e614";
+}
+
+.icon-add:before {
+  content: "\e9fe";
+}
+
+
+
