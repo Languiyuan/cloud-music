@@ -7,6 +7,9 @@ const ALBUM_AREA = [
   { name: '日本', code: 'JP' },
 ]
 
+// MV的分类（地区）
+const MV_AREA = ['全部', '内地', '港台', '欧美', '日本', '韩国']
 export default {
   ALBUM_AREA,
+  MV_AREA,
 }

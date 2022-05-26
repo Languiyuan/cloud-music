@@ -30,7 +30,11 @@ const routes = [
     name: 'mvlist',
     component: () => import('@views/mvlist/Index.vue'),
   },
-
+  {
+    path: '/mvlist/mv',
+    name: 'mv',
+    component: () => import('@views/mvlist/Detail.vue'),
+  },
   {
     path: '/artist',
     name: 'artist',
