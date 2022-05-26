@@ -105,7 +105,6 @@ const getTopList = async () => {
       res.playlist.tracks.splice(0, rankInfo.num),
       res.privileges.splice(0, rankInfo.num)
     )
-    console.log(rankInfo)
   })
   rankInfo.loading = false
 }

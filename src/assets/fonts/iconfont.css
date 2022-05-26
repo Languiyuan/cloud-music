@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3375877 */
-  src: url('iconfont.woff2?t=1653316137334') format('woff2'),
-       url('iconfont.woff?t=1653316137334') format('woff'),
-       url('iconfont.ttf?t=1653316137334') format('truetype');
+  src: url('iconfont.woff2?t=1653541160799') format('woff2'),
+       url('iconfont.woff?t=1653541160799') format('woff'),
+       url('iconfont.ttf?t=1653541160799') format('truetype');
 }
 
 
@@ -58,5 +58,13 @@
   content: "\e9fe";
 }
 
+/* mv-list */
+.icon-video-play:before {
+  content: "\e6ab";
+}
+
+.icon-video:before {
+  content: "\e76d";
+}
 
 

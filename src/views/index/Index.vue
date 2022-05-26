@@ -49,6 +49,27 @@
     <div class="rank-list">
       <RankList></RankList>
     </div>
+
+    <div class="mv-list">
+      <div class="m__title">
+        <h3>最新MV</h3>
+        <span
+          :class="{
+            title__nav: true,
+            active: mv_index == index ? true : false,
+          }"
+          v-for="(item, index) in mv_type"
+          :key="index"
+          @click="chooseMVType(index)"
+          >{{ item }}</span
+        >
+      </div>
+      <MvList
+        :mv_list="mv_list"
+        :loading="mv_loading"
+        :count="mv_count"
+      ></MvList>
+    </div>
   </div>
 </template>
 
@@ -57,9 +78,11 @@ import Banners from '../../components/Banners.vue'
 import PlayList from '../../components/PlayList.vue'
 import AlbumList from '../../components/AlbumList.vue'
 import RankList from './RankList.vue'
+import MvList from '../../components/MvList.vue'
 
 import hot_recom from '@assets/js/index/hot_recom.js'
 import top_album from '@assets/js/index/album_list.js'
+import new_mv from '@assets/js/index/mv_list.js'
 
 import { toRefs } from 'vue'
 
@@ -77,6 +100,10 @@ const {
 const { albumInfo, chooseAlbumType } = top_album()
 const { album_area, album_list, album_count, album_loading, album_index } =
   toRefs(albumInfo)
+
+// --------------最新mv
+const { mv_info, chooseMVType } = new_mv()
+const { mv_type, mv_index, mv_list, mv_loading, mv_count } = toRefs(mv_info)
 </script>
 
 <style lang="scss" scoped>
@@ -96,6 +123,14 @@ const { album_area, album_list, album_count, album_loading, album_index } =
   border-radius: 12px;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
   height: 507px;
+}
+
+.mv-list {
+  padding: 0 20px;
+  margin: 25px auto;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
 }
 .m__title {
   display: flex;

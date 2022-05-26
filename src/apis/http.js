@@ -44,4 +44,26 @@ const topRankList = ({ id = '', s = 8 }) => {
   return api.get(`/playlist/detail?id=${id}&s=${s}`, {})
 }
 
-export { getBanner, hotList, playList, topAlbum, toplist, topRankList }
+/********** MV ***********/
+// 最新MV
+const newMv = ({ limit = 50 }) => {
+  return api.get(`/mv/all?limit=${limit}`, {})
+}
+
+// 获取 mv
+const mv = ({ area = '', type = '', order = '', limit = 50, offset = 0 }) => {
+  return api.get(
+    `/mv/all?area=${area}&type=${type}&order=${order}&limit=${limit}&offset=${offset}`,
+    {}
+  )
+}
+export {
+  getBanner,
+  hotList,
+  playList,
+  topAlbum,
+  toplist,
+  topRankList,
+  newMv,
+  mv,
+}
