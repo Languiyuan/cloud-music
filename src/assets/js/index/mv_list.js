@@ -19,8 +19,6 @@ export default function () {
     }
     mv_info.mv_list = res.data
     mv_info.mv_loading = false
-
-    console.log('res', mv_info)
   }
 
   getNewMvList()

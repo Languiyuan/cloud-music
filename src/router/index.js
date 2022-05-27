@@ -56,6 +56,11 @@ const routes = [
     name: 'album',
     component: () => import('@views/album/Index.vue'),
   },
+  {
+    path: '/dj',
+    name: 'dj',
+    component: () => import('@views/dj/Index.vue'),
+  },
 ]
 
 const router = createRouter({

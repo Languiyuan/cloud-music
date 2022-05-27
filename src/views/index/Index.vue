@@ -70,6 +70,21 @@
         :count="mv_count"
       ></MvList>
     </div>
+
+    <div class="dj-artist">
+      <div class="dj-list">
+        <div class="m__title">
+          <h3>热门电台</h3>
+        </div>
+        <DjList></DjList>
+      </div>
+      <div class="artist-list">
+        <div class="m__title">
+          <h3>热门歌手</h3>
+        </div>
+        <ArtistList></ArtistList>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -78,6 +93,8 @@ import Banners from '../../components/Banners.vue'
 import PlayList from '../../components/PlayList.vue'
 import AlbumList from '../../components/AlbumList.vue'
 import RankList from './RankList.vue'
+import DjList from './DjList.vue'
+import ArtistList from './ArtistList.vue'
 import MvList from '../../components/MvList.vue'
 
 import hot_recom from '@assets/js/index/hot_recom.js'
@@ -131,6 +148,29 @@ const { mv_type, mv_index, mv_list, mv_loading, mv_count } = toRefs(mv_info)
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+}
+
+.dj-artist {
+  display: flex;
+  margin: 25px auto;
+  justify-content: space-between;
+  .dj-list {
+    height: 433px;
+    padding: 0 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    flex: 1;
+  }
+  .artist-list {
+    padding: 0 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 20px 27px rgb(0 0 0 / 5%);
+    flex-basis: 480px;
+    box-sizing: border-box;
+    margin-left: 20px;
+  }
 }
 .m__title {
   display: flex;

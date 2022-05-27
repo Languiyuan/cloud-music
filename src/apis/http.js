@@ -57,6 +57,17 @@ const mv = ({ area = '', type = '', order = '', limit = 50, offset = 0 }) => {
     {}
   )
 }
+
+/********** 电台 ***********/
+const getHotDj = ({ limit = 30, offset = 0 }) => {
+  return api.get(`/dj/hot?limit=${limit}&offset=${offset}`)
+}
+
+/********** 歌手 ***********/
+const getHotArtist = ({ limit = 30, offset = 0 }) => {
+  return api.get(`/top/artists?limit=${limit}&offset=${offset}`)
+}
+
 export {
   getBanner,
   hotList,
@@ -66,4 +77,6 @@ export {
   topRankList,
   newMv,
   mv,
+  getHotDj,
+  getHotArtist,
 }
