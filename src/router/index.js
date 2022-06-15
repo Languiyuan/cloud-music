@@ -61,6 +61,11 @@ const routes = [
     name: 'dj',
     component: () => import('@views/dj/Index.vue'),
   },
+  {
+    path: '/song',
+    name: 'song',
+    component: () => import('@views/song/Index.vue'),
+  },
 ]
 
 const router = createRouter({

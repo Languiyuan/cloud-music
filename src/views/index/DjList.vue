@@ -1,5 +1,5 @@
 <template>
-  <el-skeleton animated :count="count" :throttle="500" :loading="false">
+  <el-skeleton animated :count="count" :throttle="500" :loading="loading">
     <template #template>
       <div class="item">
         <el-skeleton-item variant="image" class="ske__img" />
@@ -65,6 +65,7 @@ const getHotDjList = async () => {
   }
 
   DjInfo.Dj_list = res.djRadios
+  DjInfo.loading = false
   console.log('dj', DjInfo.Dj_list)
 }
 

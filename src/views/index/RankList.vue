@@ -64,7 +64,11 @@
               </div>
               <!-- 做一个权限的判断 -->
               <div class="song__operate">
-                <i class="iconfont icon-add" title="添加到列表"></i>
+                <i
+                  class="iconfont icon-add"
+                  title="添加到列表"
+                  @click="addSongList(songItem)"
+                ></i>
                 <i class="iconfont icon-favorite" title="添加到收藏"></i>
               </div>
             </div>
@@ -77,6 +81,8 @@
 
 <script setup>
 import { getCurrentInstance, reactive, toRefs } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
 const { proxy } = getCurrentInstance()
 
 const rankInfo = reactive({
@@ -107,9 +113,16 @@ const getTopList = async () => {
     )
   })
   rankInfo.loading = false
+  console.log(rankInfo.songList)
 }
 
 getTopList()
+
+// 添加歌曲到播放列表
+const addSongList = (songInfo) => {
+  store.dispatch('addList', { list: [songInfo] })
+  store.commit('SET_PLAYLISTTIPS', true)
+}
 
 const { rankList, songList, num, loading } = toRefs(rankInfo)
 </script>

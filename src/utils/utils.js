@@ -54,4 +54,17 @@ export default {
     })
     return ret
   },
+
+  // 添加歌曲到播放列表，过滤重复的歌曲
+  concatPlayList(newList = [], oldList = []) {
+    const arr = [...oldList, ...newList]
+    const map = new Map()
+
+    for (const item of arr) {
+      if (!map.has(item.id)) {
+        map.set(item.id, item)
+      }
+    }
+    return [...map.values()]
+  },
 }

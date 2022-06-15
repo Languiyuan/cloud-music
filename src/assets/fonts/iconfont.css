@@ -1,10 +1,9 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3375877 */
-  src: url('iconfont.woff2?t=1653657902896') format('woff2'),
-       url('iconfont.woff?t=1653657902896') format('woff'),
-       url('iconfont.ttf?t=1653657902896') format('truetype');
+  src: url('iconfont.woff2?t=1655089455891') format('woff2'),
+       url('iconfont.woff?t=1655089455891') format('woff'),
+       url('iconfont.ttf?t=1655089455891') format('truetype');
 }
-
 
 .iconfont {
   font-family: "iconfont" !important;
@@ -70,5 +69,74 @@
 /* DJ */
 .icon-dj-play:before {
   content: "\e65b";
+}
+
+/* audio */
+.icon-play:before {
+  content: "\e87c";
+}
+
+.icon-pause:before {
+  content: "\e626";
+}
+
+.icon-close:before {
+  content: "\eca0";
+}
+
+.icon-lastSong:before {
+  content: "\e603";
+}
+
+.icon-nextSong:before {
+  content: "\e602";
+}
+
+.icon-volumeCross:before {
+  content: "\ea0b";
+}
+
+.icon-volumeHigh:before {
+  content: "\ea0c";
+}
+
+.icon-volumeLow:before {
+  content: "\ea0d";
+}
+
+.icon-volumeMiddle:before {
+  content: "\ea0e";
+}
+
+.icon-shuffle:before {
+  content: "\ea75";
+}
+
+.icon-repeat:before {
+  content: "\ea76";
+}
+
+.icon-repeatOnce:before {
+  content: "\ea77";
+}
+
+.icon-window:before {
+  content: "\e6db";
+}
+
+.icon-locked:before {
+  content: "\e67c";
+}
+
+.icon-unlock:before {
+  content: "\e67d";
+}
+/* not use */
+.icon-bofang-xunhuanbofang:before {
+  content: "\e68d";
+}
+
+.icon-pip:before {
+  content: "\e624";
 }
 
