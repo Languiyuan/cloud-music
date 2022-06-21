@@ -66,7 +66,6 @@ const getHotDjList = async () => {
 
   DjInfo.Dj_list = res.djRadios
   DjInfo.loading = false
-  console.log('dj', DjInfo.Dj_list)
 }
 
 getHotDjList()

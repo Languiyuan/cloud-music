@@ -12,9 +12,23 @@ export default {
     return num
   },
 
-  // 歌曲的市场duration 的转换 格式转换成 03:30
+  // 将歌曲的时间03：30 转换为 毫秒
+  // 1234:56 => 1234*60 + 56
+  formatSongSecond(duration) {
+    let arr = duration.split(':')
+    let second = 0
+
+    for (let i = 0; i < arr.length; i++) {
+      second += arr[i] * 60 * (arr.length - 1 - i)
+    }
+
+    second += arr[arr.length - 1] * 1
+    return second
+  },
+
+  // 歌曲的市场duration 的转换 s格式转换成 03:30
   formatSongTime(duration = 0) {
-    duration = duration >= 1000 ? duration : 0
+    // duration = duration >= 1000 ? duration : 0
     const m = (Math.floor(duration / 60) + '').padStart(2, '0')
     const s = (Math.floor(duration % 60) + '').padStart(2, '0')
     return `${m}:${s}`

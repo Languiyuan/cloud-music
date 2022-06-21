@@ -6,10 +6,22 @@
     @mouseleave="leaveBar($event)"
   >
     <!-- 播放的固定按钮 -->
-    <div class="lock">
-      <div class="lock-btn">123</div>
+    <div class="lock" @click="lockHandler">
+      <div class="lock-btn">
+        <i :class="['iconfont', lockIcon]"></i>
+      </div>
     </div>
-
+    <!-- 进度条 -->
+    <div class="song-progress">
+      <el-slider
+        v-model="songProgress"
+        :format-tooltip="formatTooltipTime"
+        @change="setAudioBoxCurrentTime"
+        :max="1"
+        :min="0"
+        :step="0.01"
+      ></el-slider>
+    </div>
     <div class="wrapper">
       <div class="bar-inside">
         <div class="bar-left">
@@ -34,7 +46,7 @@
               class="song-name"
               >{{ curSongInfo.name }}</router-link
             >
-            <p class="song-artist">
+            <div class="song-artist">
               <router-link
                 :to="{ path: '/singer', query: '{id: item.id}' }"
                 v-for="(item, index) in curSongInfo.singer"
@@ -42,27 +54,44 @@
               >
                 {{ index != 0 ? '/' + item.name : item.name }}
               </router-link>
-            </p>
+            </div>
           </div>
-          <div class="bar-time">12:31/11:23</div>
+          <div class="bar-time">{{ songCurrentTime }}/{{ songTime }}</div>
         </div>
         <div class="bar-middle">
           <div class="control">
-            <i class="iconfont icon-lastSong" title="上一首"></i>
-            <i :class="['iconfont', statusIcon]" @click="changePlayStatus"></i>
-            <i class="iconfont icon-nextSong" title="下一首"></i>
+            <i
+              class="iconfont icon-lastSong"
+              title="上一首"
+              @click.stop="audioHandler('prev')"
+            ></i>
+            <i
+              :class="['iconfont', statusIcon]"
+              @click.stop="audioHandler('play')"
+            ></i>
+            <i
+              class="iconfont icon-nextSong"
+              title="下一首"
+              @click.stop="audioHandler('next')"
+            ></i>
           </div>
         </div>
         <div class="bar-right">
           <div class="bar-oper">
             <div class="volume-main">
-              <i :class="['iconfont', volumeIcon]"></i>
+              <i :class="['iconfont', volumeIcon]" @click="mutedHandler"></i>
+              <div class="volume-slider">
+                <el-slider
+                  v-model="volumeCount"
+                  @change="setVolumeCount"
+                ></el-slider>
+              </div>
             </div>
             <div class="play-mode">
               <i
                 :class="['iconfont', modeIcon.iconName]"
                 title="modeIcon.title"
-                @click="changePlayMode"
+                @click="playAudioMode"
               ></i>
             </div>
             <div class="popover">
@@ -98,22 +127,44 @@
 </template>
 
 <script setup>
-import { p } from '@antfu/utils'
-import { onMounted, reactive, toRefs, computed } from 'vue'
+import { indexOf } from 'lodash'
+import {
+  onMounted,
+  reactive,
+  toRefs,
+  computed,
+  getCurrentInstance,
+  inject,
+  watch,
+  ref,
+} from 'vue'
 import store from '../../store'
 
+const { proxy } = getCurrentInstance()
 const info = reactive({
-  showName: 'active',
+  showName: '',
+  lockIcon: 'icon-unlock',
   statusIcon: 'icon-play',
   volumeIcon: 'icon-volumeHigh',
   mode: 0, // 0 循环模式 1 单曲循环 2 随机播放
+  currentTime: inject('currentTime'),
+  volumeCount: 100,
+  isMuted: false,
+  isLock: false,
+  timer: null,
 })
-const { showName, statusIcon, volumeIcon } = toRefs(info)
+const { showName, statusIcon, volumeIcon, volumeCount, lockIcon } = toRefs(info)
 
+const emit = defineEmits([
+  'audioHandler',
+  'playAudioMode',
+  'setAudioBoxTime',
+  'isMutedHandler',
+  'setVolumeProgress',
+])
 onMounted(() => {
   // leaverBar()
   store.commit('SET_PLAYLIST', playList.value)
-  console.log(playList.value)
 })
 
 // 获取播放列表
@@ -124,17 +175,45 @@ const isPlayed = computed(() => store.getters.isPlayed)
 // 获取当前播放歌曲的info
 const curSongInfo = computed(() => playList.value[playIndex.value])
 
-// 暂停 播放功能
-const changePlayStatus = () => {
-  info.statusIcon = info.statusIcon == 'icon-play' ? 'icon-pause' : 'icon-play'
+// 暂停 播放 图标
+info.statusIcon = computed(() => {
+  return isPlayed.value ? 'icon-play' : 'icon-pause'
+})
+
+// 设置音量（拖动音量） emit
+const setVolumeCount = (val) => {
+  emit('setVolumeProgress', val / 100)
 }
+// 音量图标的判断逻辑
+const volumeIconHandler = (v) => {
+  if (v > 66) {
+    info.volumeIcon = 'icon-volumeHigh'
+  } else if (v > 33) {
+    info.volumeIcon = 'icon-volumeMiddle'
+  } else if (v > 0) {
+    info.volumeIcon = 'icon-volumeLow'
+  } else {
+    info.volumeIcon = 'icon-volumeCross'
+  }
+}
+// 设置静音
+const mutedHandler = () => {
+  info.isMuted = !info.isMuted
+  if (info.isMuted) {
+    info.volumeIcon = 'icon-volumeCross'
+  } else {
+    volumeIconHandler(info.volumeCount)
+  }
 
-// 音量的icon
-// const changeVolumeIcon = () => {
-//   // 临时的音量数据 100
-//   let volumeCount = 100
-
-// }
+  emit('isMutedHandler', info.isMuted)
+}
+// 音量的图标
+watch(
+  () => info.volumeCount,
+  (curCount) => {
+    volumeIconHandler(curCount)
+  }
+)
 
 // 播放模式
 const modeIcon = computed(() => {
@@ -146,19 +225,82 @@ const modeIcon = computed(() => {
   return params[info.mode]
 })
 
-const changePlayMode = () => {
+const playAudioMode = () => {
   info.mode = info.mode == 2 ? 0 : info.mode + 1
+  emit('playAudioMode', info.mode)
 }
 
+// 音频 播放 暂停 上一首 下一首
+const audioHandler = (type) => {
+  emit('audioHandler', type)
+}
+
+// 进度条 0.123234 0~1
+let songProgress = ref(0)
+
+watch(
+  () => info.currentTime,
+  (currentTime) => {
+    // 0~1
+    songProgress.value =
+      (currentTime * 1000) /
+      proxy.$utils.formatSongSecond(curSongInfo.value.duration)
+  }
+)
+
+// el-slider format-tooltip
+const formatTooltipTime = () => {
+  return proxy.$utils.formatSongTime(info.currentTime)
+}
+// 进度条的拖动
+const setAudioBoxCurrentTime = (val) => {
+  let changedTime =
+    (songProgress.value *
+      proxy.$utils.formatSongSecond(curSongInfo.value.duration)) /
+    1000
+  console.log(proxy.$utils.formatSongSecond(curSongInfo.value.duration) / 1000)
+  emit('setAudioBoxTime', changedTime)
+}
+
+// 时间进度显示 03:30
+let songTime = computed(() =>
+  proxy.$utils.formatSongTime(
+    proxy.$utils.formatSongSecond(curSongInfo.value.duration) / 1000
+  )
+)
+
+let songCurrentTime = computed(() =>
+  proxy.$utils.formatSongTime(info.currentTime)
+)
+
+// 锁定bar
+const lockHandler = () => {
+  info.isLock = !info.isLock
+  if (info.isLock) {
+    info.lockIcon = 'icon-locked'
+  } else {
+    info.lockIcon = 'icon-unlock'
+  }
+}
 const enterBar = () => {
   info.showName = 'active'
+  if (info.timer) {
+    clearTimeout(info.timer)
+  }
 }
 const leaveBar = () => {
-  info.showName = 'active'
+  if (info.isLock) {
+    return
+  }
+  info.timer = setTimeout(() => {
+    info.showName = ''
+  }, 3000)
 }
+
+defineExpose({})
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import '@assets/scss/mixins.scss';
 .play-bar {
   position: fixed;
@@ -182,9 +324,30 @@ const leaveBar = () => {
   height: 30px;
   width: 100%;
   .lock-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     right: 15%;
+    top: -3px;
+    width: 60px;
+    height: 30px;
+    border-radius: 30px 30px 0 0;
     background-color: #fff;
+    i {
+      font-size: 16px;
+    }
+  }
+}
+.song-progress {
+  position: absolute;
+  width: 100%;
+  top: -17px;
+  :deep(.el-slider__button) {
+    border-color: var(--color-text-height);
+  }
+  :deep(.el-slider__bar) {
+    background-color: var(--color-text-height);
   }
 }
 .wrapper {
@@ -213,7 +376,7 @@ const leaveBar = () => {
       width: 95px;
       overflow: hidden;
       .song-name {
-        display: inline-block;
+        display: block;
         font-size: 12px;
         font-weight: 700;
         color: #2d2d2d;
@@ -268,6 +431,9 @@ const leaveBar = () => {
       align-items: center;
       height: 70px;
       .volume-main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 210px;
         line-height: 70px;
         i {
@@ -275,6 +441,16 @@ const leaveBar = () => {
           color: #999999;
           font-size: 22px;
           cursor: pointer;
+        }
+        .volume-slider {
+          flex: 1;
+          margin: 0 15px;
+          :deep(.el-slider__button) {
+            border-color: var(--color-text-height);
+          }
+          :deep(.el-slider__bar) {
+            background-color: var(--color-text-height);
+          }
         }
       }
       .play-mode {

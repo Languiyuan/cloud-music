@@ -7,7 +7,6 @@ export default {
   name: 'PlayListDetail',
   setup() {
     const route = useRoute()
-    console.log(route)
   },
 }
 </script>

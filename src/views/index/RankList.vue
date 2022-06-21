@@ -113,7 +113,6 @@ const getTopList = async () => {
     )
   })
   rankInfo.loading = false
-  console.log(rankInfo.songList)
 }
 
 getTopList()
