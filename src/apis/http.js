@@ -68,6 +68,11 @@ const getHotArtist = ({ limit = 30, offset = 0 }) => {
   return api.get(`/top/artists?limit=${limit}&offset=${offset}`)
 }
 
+/********** 歌词 ***********/
+const getSongLyrics = ({ id = '' }) => {
+  return api.get(`/lyric?id=${id}`)
+}
+
 export {
   getBanner,
   hotList,
@@ -79,4 +84,5 @@ export {
   mv,
   getHotDj,
   getHotArtist,
+  getSongLyrics,
 }

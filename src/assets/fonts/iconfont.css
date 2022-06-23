@@ -126,6 +126,7 @@
 
 .icon-locked:before {
   content: "\e67c";
+  color: var(--color-text-height);
 }
 
 .icon-unlock:before {

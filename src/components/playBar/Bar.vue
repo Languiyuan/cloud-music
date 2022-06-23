@@ -6,8 +6,8 @@
     @mouseleave="leaveBar($event)"
   >
     <!-- 播放的固定按钮 -->
-    <div class="lock" @click="lockHandler">
-      <div class="lock-btn">
+    <div class="lock">
+      <div class="lock-btn" @click="lockHandler">
         <i :class="['iconfont', lockIcon]"></i>
       </div>
     </div>
@@ -63,16 +63,16 @@
             <i
               class="iconfont icon-lastSong"
               title="上一首"
-              @click.stop="audioHandler('prev')"
+              @click="audioHandler('prev')"
             ></i>
             <i
               :class="['iconfont', statusIcon]"
-              @click.stop="audioHandler('play')"
+              @click="audioHandler('play')"
             ></i>
             <i
               class="iconfont icon-nextSong"
               title="下一首"
-              @click.stop="audioHandler('next')"
+              @click="audioHandler('next')"
             ></i>
           </div>
         </div>
@@ -97,9 +97,18 @@
             <div class="popover">
               <el-popover placement="top" :width="400" trigger="click">
                 <template #reference>
-                  <span class="lyrics-btn">词</span>
+                  <span
+                    class="lyrics-btn"
+                    @click="() => (isPopover = !isPopover)"
+                    >词</span
+                  >
                 </template>
-                <div class="lyrics-container">我是划过天边的那道火焰</div>
+                <div class="lyrics-container">
+                  <Lyrics
+                    :sId="curSongInfo.id"
+                    :currentTime="currentTime"
+                  ></Lyrics>
+                </div>
               </el-popover>
 
               <el-popover placement="top" :width="550" trigger="click">
@@ -113,7 +122,7 @@
                     <i class="iconfont icon-playlist"></i>
                   </div>
                 </template>
-                <div class="lyrics-container">我是划过天边的那道火焰</div>
+                <div class="lyrics-container">我是天边最璀璨的烟火！</div>
               </el-popover>
 
               <i class="iconfont icon-pip song-pip"></i>
@@ -127,7 +136,6 @@
 </template>
 
 <script setup>
-import { indexOf } from 'lodash'
 import {
   onMounted,
   reactive,
@@ -139,6 +147,7 @@ import {
   ref,
 } from 'vue'
 import store from '../../store'
+import Lyrics from '../Lyrics.vue'
 
 const { proxy } = getCurrentInstance()
 const info = reactive({
@@ -147,13 +156,22 @@ const info = reactive({
   statusIcon: 'icon-play',
   volumeIcon: 'icon-volumeHigh',
   mode: 0, // 0 循环模式 1 单曲循环 2 随机播放
-  currentTime: inject('currentTime'),
+  currentTime: inject('currentTime'), // s
   volumeCount: 100,
   isMuted: false,
   isLock: false,
+  isPopover: false,
   timer: null,
 })
-const { showName, statusIcon, volumeIcon, volumeCount, lockIcon } = toRefs(info)
+const {
+  showName,
+  statusIcon,
+  volumeIcon,
+  volumeCount,
+  lockIcon,
+  currentTime,
+  isPopover,
+} = toRefs(info)
 
 const emit = defineEmits([
   'audioHandler',
@@ -289,9 +307,10 @@ const enterBar = () => {
   }
 }
 const leaveBar = () => {
-  if (info.isLock) {
+  if (info.isLock || info.isPopover) {
     return
   }
+  clearTimeout(info.timer)
   info.timer = setTimeout(() => {
     info.showName = ''
   }, 3000)
@@ -320,9 +339,10 @@ defineExpose({})
 }
 .lock {
   position: absolute;
-  top: -30px;
+  top: -34px;
   height: 30px;
   width: 100%;
+  z-index: 6;
   .lock-btn {
     display: flex;
     justify-content: center;
@@ -334,6 +354,7 @@ defineExpose({})
     height: 30px;
     border-radius: 30px 30px 0 0;
     background-color: #fff;
+    cursor: pointer;
     i {
       font-size: 16px;
     }
@@ -348,6 +369,13 @@ defineExpose({})
   }
   :deep(.el-slider__bar) {
     background-color: var(--color-text-height);
+  }
+  :deep(.el-slider__button-wrapper) {
+    z-index: 7;
+  }
+  :deep(.el-slider__button) {
+    width: 15px;
+    height: 15px;
   }
 }
 .wrapper {
@@ -450,6 +478,10 @@ defineExpose({})
           }
           :deep(.el-slider__bar) {
             background-color: var(--color-text-height);
+          }
+          :deep(.el-slider__button) {
+            width: 15px;
+            height: 15px;
           }
         }
       }
