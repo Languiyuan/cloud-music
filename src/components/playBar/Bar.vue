@@ -95,13 +95,16 @@
               ></i>
             </div>
             <div class="popover">
-              <el-popover placement="top" :width="400" trigger="click">
+              <el-popover
+                placement="top"
+                :width="400"
+                trigger="click"
+                :offset="40"
+                @hide="isLyrics = false"
+                @show="isLyrics = true"
+              >
                 <template #reference>
-                  <span
-                    class="lyrics-btn"
-                    @click="() => (isPopover = !isPopover)"
-                    >词</span
-                  >
+                  <span class="lyrics-btn">词</span>
                 </template>
                 <div class="lyrics-container">
                   <Lyrics
@@ -111,7 +114,14 @@
                 </div>
               </el-popover>
 
-              <el-popover placement="top" :width="550" trigger="click">
+              <el-popover
+                placement="top"
+                :width="550"
+                trigger="click"
+                :offset="40"
+                @hide="isSongList = false"
+                @show="isSongList = true"
+              >
                 <template #reference>
                   <div class="playlist-btn">
                     <span class="song-count">{{
@@ -122,7 +132,9 @@
                     <i class="iconfont icon-playlist"></i>
                   </div>
                 </template>
-                <div class="lyrics-container">我是天边最璀璨的烟火！</div>
+                <div class="song-container">
+                  <SongList></SongList>
+                </div>
               </el-popover>
 
               <i class="iconfont icon-pip song-pip"></i>
@@ -148,6 +160,7 @@ import {
 } from 'vue'
 import store from '../../store'
 import Lyrics from '../Lyrics.vue'
+import SongList from '../SongList.vue'
 
 const { proxy } = getCurrentInstance()
 const info = reactive({
@@ -157,10 +170,11 @@ const info = reactive({
   volumeIcon: 'icon-volumeHigh',
   mode: 0, // 0 循环模式 1 单曲循环 2 随机播放
   currentTime: inject('currentTime'), // s
-  volumeCount: 100,
+  volumeCount: 50,
   isMuted: false,
   isLock: false,
-  isPopover: false,
+  isSongList: false,
+  isLyrics: false,
   timer: null,
 })
 const {
@@ -170,7 +184,8 @@ const {
   volumeCount,
   lockIcon,
   currentTime,
-  isPopover,
+  isSongList,
+  isLyrics,
 } = toRefs(info)
 
 const emit = defineEmits([
@@ -259,6 +274,9 @@ let songProgress = ref(0)
 watch(
   () => info.currentTime,
   (currentTime) => {
+    if (!curSongInfo.value) {
+      return
+    }
     // 0~1
     songProgress.value =
       (currentTime * 1000) /
@@ -276,7 +294,6 @@ const setAudioBoxCurrentTime = (val) => {
     (songProgress.value *
       proxy.$utils.formatSongSecond(curSongInfo.value.duration)) /
     1000
-  console.log(proxy.$utils.formatSongSecond(curSongInfo.value.duration) / 1000)
   emit('setAudioBoxTime', changedTime)
 }
 
@@ -300,6 +317,14 @@ const lockHandler = () => {
     info.lockIcon = 'icon-unlock'
   }
 }
+const lyricsHandle = () => {
+  info.isLyrics = !info.isLyrics
+  info.isSongList = false
+}
+const songListHandle = () => {
+  info.isSongList = !info.isSongList
+  info.isLyrics = false
+}
 const enterBar = () => {
   info.showName = 'active'
   if (info.timer) {
@@ -307,11 +332,11 @@ const enterBar = () => {
   }
 }
 const leaveBar = () => {
-  if (info.isLock || info.isPopover) {
-    return
-  }
   clearTimeout(info.timer)
   info.timer = setTimeout(() => {
+    if (info.isLock || info.isSongList || info.isLyrics) {
+      return
+    }
     info.showName = ''
   }, 3000)
 }

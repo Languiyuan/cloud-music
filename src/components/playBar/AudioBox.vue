@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { computed, ref, reactive, watch, nextTick } from 'vue'
+import { computed, ref, reactive, watch, nextTick, onMounted } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()

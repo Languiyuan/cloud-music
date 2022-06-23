@@ -16,7 +16,7 @@
 <script setup>
 import Bar from './Bar.vue'
 import AudioBox from './AudioBox.vue'
-import { computed, ref, provide } from 'vue'
+import { computed, ref, provide, onMounted } from 'vue'
 import { useStore } from 'vuex'
 
 const audioRef = ref(null)
