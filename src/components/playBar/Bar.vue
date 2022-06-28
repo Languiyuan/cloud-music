@@ -133,7 +133,10 @@
                   </div>
                 </template>
                 <div class="song-container">
-                  <SongList></SongList>
+                  <SongList
+                    :curSongInfo="curSongInfo"
+                    :playList="playList"
+                  ></SongList>
                 </div>
               </el-popover>
 

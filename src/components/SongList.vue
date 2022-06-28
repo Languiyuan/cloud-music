@@ -21,7 +21,13 @@
         <ul>
           <li class="sl-item" v-for="(item, index) in playList" :key="item.id">
             <div>
-              <span>{{ index + 1 }}</span>
+              <div class="song-index" :style="indexShow(index)">
+                {{ index + 1 }}
+              </div>
+              <div class="song-playing" :style="playingShow(index)">10</div>
+              <div
+                :class="['song-playicon', 'iconfont', playIcon(index)]"
+              ></div>
             </div>
             <div>{{ item.name }}</div>
             <div>
@@ -49,8 +55,38 @@ import { useStore } from 'vuex'
 const store = useStore()
 const { proxy } = getCurrentInstance()
 
-const playList = computed(() => {
-  return store.getters.playList
+const playIndex = computed(() => store.getters.playIndex)
+const isPlayed = computed(() => store.getters.isPlayed)
+
+const props = defineProps({
+  playList: null,
+  curSongInfo: null,
+})
+
+const indexShow = computed(() => (index) => {
+  let flag = playIndex.value == index && isPlayed.value == true ? true : false
+  if (flag) {
+    return 'display: none'
+  } else {
+    return ''
+  }
+})
+
+const playingShow = computed(() => (index) => {
+  let flag = playIndex.value == index && isPlayed.value == true ? false : true
+  if (flag) {
+    return 'display: none'
+  } else {
+    return ''
+  }
+})
+
+const playIcon = computed(() => (index) => {
+  if (playIndex.value == index) {
+    return isPlayed.value ? 'icon-pause' : 'icon-play'
+  } else {
+    return 'icon-play'
+  }
 })
 const list = ref([])
 
@@ -69,9 +105,9 @@ const formatDuration = (playList) => {
   })
 }
 watch(
-  playList,
+  () => props.playList,
   () => {
-    formatDuration(playList.value)
+    formatDuration(props.playList)
   },
   { immediate: true }
 )
@@ -156,11 +192,27 @@ const clearHandle = () => {
       align-items: center;
       height: 50px;
       font-size: 14px;
+      &:hover {
+        background-color: #f0f0f0;
+        .song-index {
+          display: none;
+        }
+        .song-playing {
+          display: none;
+        }
+        .song-playicon {
+          display: block;
+        }
+      }
+      .song-playicon {
+        display: none;
+        color: var(--color-text-height);
+        font-size: 16px;
+      }
       :nth-child(1) {
         width: 100px;
         padding-left: 10px;
-        span {
-          display: block;
+        .song-index {
           width: 25px;
           text-align: center;
           padding-left: 0;
