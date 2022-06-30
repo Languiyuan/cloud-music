@@ -320,14 +320,7 @@ const lockHandler = () => {
     info.lockIcon = 'icon-unlock'
   }
 }
-const lyricsHandle = () => {
-  info.isLyrics = !info.isLyrics
-  info.isSongList = false
-}
-const songListHandle = () => {
-  info.isSongList = !info.isSongList
-  info.isLyrics = false
-}
+
 const enterBar = () => {
   info.showName = 'active'
   if (info.timer) {

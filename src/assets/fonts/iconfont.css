@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3375877 */
-  src: url('iconfont.woff2?t=1655089455891') format('woff2'),
-       url('iconfont.woff?t=1655089455891') format('woff'),
-       url('iconfont.ttf?t=1655089455891') format('truetype');
+  src: url('iconfont.woff2?t=1656567076508') format('woff2'),
+       url('iconfont.woff?t=1656567076508') format('woff'),
+       url('iconfont.ttf?t=1656567076508') format('truetype');
 }
 
 .iconfont {
@@ -131,6 +131,14 @@
 
 .icon-unlock:before {
   content: "\e67d";
+}
+
+.icon-delete:before {
+  content: "\e6b4";
+}
+
+.icon-collection:before {
+  content: "\e79d";
 }
 /* not use */
 .icon-bofang-xunhuanbofang:before {

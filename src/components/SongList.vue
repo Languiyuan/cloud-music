@@ -6,7 +6,7 @@
         <span class="sl-count">(共{{ playList.length }}首)</span>
       </div>
       <div class="sl-right" @click="clearHandle">
-        <i class="iconfont icon-close"></i>
+        <i class="iconfont icon-delete"></i>
         <span>清空列表</span>
       </div>
     </div>
@@ -24,9 +24,28 @@
               <div class="song-index" :style="indexShow(index)">
                 {{ index + 1 }}
               </div>
-              <div class="song-playing" :style="playingShow(index)">10</div>
+              <div class="song-playing" :style="playingShow(index)">
+                <div
+                  class="playing-cloumn"
+                  style="animation-delay: -1.2s"
+                ></div>
+                <div class="playing-cloumn"></div>
+                <div
+                  class="playing-cloumn"
+                  style="animation-delay: -1.5s"
+                ></div>
+                <div
+                  class="playing-cloumn"
+                  style="animation-delay: -0.9s"
+                ></div>
+                <div
+                  class="playing-cloumn"
+                  style="animation-delay: -0.6s"
+                ></div>
+              </div>
               <div
                 :class="['song-playicon', 'iconfont', playIcon(index)]"
+                @click="isPlayedHandle(index)"
               ></div>
             </div>
             <div>{{ item.name }}</div>
@@ -40,7 +59,19 @@
                 {{ index != 0 ? '/' + singer.name : singer.name }}
               </router-link>
             </div>
-            <div>{{ list[index] }}</div>
+            <div>
+              <div class="song-duration">{{ list[index] }}</div>
+              <div class="handle-icon">
+                <i
+                  class="iconfont icon-collection"
+                  style="transform: scale(1.2); transform-origin: center"
+                ></i>
+                <i
+                  class="iconfont icon-delete"
+                  @click.stop="deleteHandle(index)"
+                ></i>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -55,12 +86,14 @@ import { useStore } from 'vuex'
 const store = useStore()
 const { proxy } = getCurrentInstance()
 
+const playList = computed(() => store.getters.playList)
 const playIndex = computed(() => store.getters.playIndex)
 const isPlayed = computed(() => store.getters.isPlayed)
 
+const curSongInfo = computed(() => playList.value[playIndex.value])
 const props = defineProps({
-  playList: null,
-  curSongInfo: null,
+  // playList: null,
+  // curSongInfo: null,
 })
 
 const indexShow = computed(() => (index) => {
@@ -88,6 +121,33 @@ const playIcon = computed(() => (index) => {
     return 'icon-play'
   }
 })
+// 列表播放/暂停
+const isPlayedHandle = (index) => {
+  if (playIndex.value == index) {
+    store.commit('SET_PLAYSTATUS', !isPlayed.value)
+  } else {
+    store.commit('SET_PLAYINDEX', index)
+    store.commit('SET_PLAYSTATUS', true)
+  }
+}
+
+// 列表删除歌曲
+const deleteHandle = (index) => {
+  if (playList.value.length == 1) {
+    store.commit('SET_PLAYSTATUS', false)
+    store.commit('SET_PLAYLIST', [])
+  } else {
+    playList.value.splice(index, 1)
+    if (playIndex.value <= index) {
+      store.commit('SET_PLAYLIST', playList.value)
+    } else {
+      store.commit('SET_PLAYLIST', playList.value)
+      store.commit('SET_PLAYINDEX', playIndex.value - 1)
+    }
+  }
+}
+
+// 时长的格式转换
 const list = ref([])
 
 const formatDuration = (playList) => {
@@ -105,9 +165,9 @@ const formatDuration = (playList) => {
   })
 }
 watch(
-  () => props.playList,
+  () => playList.value,
   () => {
-    formatDuration(props.playList)
+    formatDuration(playList.value)
   },
   { immediate: true }
 )
@@ -187,28 +247,12 @@ const clearHandle = () => {
       height: 415px;
       overflow-y: scroll;
     }
+
     .sl-item {
       display: flex;
       align-items: center;
       height: 50px;
       font-size: 14px;
-      &:hover {
-        background-color: #f0f0f0;
-        .song-index {
-          display: none;
-        }
-        .song-playing {
-          display: none;
-        }
-        .song-playicon {
-          display: block;
-        }
-      }
-      .song-playicon {
-        display: none;
-        color: var(--color-text-height);
-        font-size: 16px;
-      }
       :nth-child(1) {
         width: 100px;
         padding-left: 10px;
@@ -236,7 +280,67 @@ const clearHandle = () => {
         padding-right: 10px;
         @include ellipsis;
       }
+      &:hover {
+        background-color: #f0f0f0;
+        .song-index {
+          display: none;
+        }
+        .song-playing {
+          display: none;
+        }
+        .song-playicon {
+          display: block;
+        }
+        .song-duration {
+          display: none;
+        }
+        .handle-icon {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+      .song-playicon {
+        display: none;
+        color: var(--color-text-height);
+        font-size: 16px;
+        margin-left: 5px;
+      }
+      .song-playing {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        width: 23px;
+        .playing-cloumn {
+          padding: 0;
+          margin: 0;
+          width: 3px;
+          height: 20px;
+          background-color: var(--color-text-height);
+          animation: play 0.9s linear infinite alternate;
+        }
+      }
+      .song-duration {
+        padding: 0;
+      }
+      .handle-icon {
+        display: none;
+        width: 60px;
+        margin-left: 40px;
+        color: var(--color-text-height);
+        i {
+          font-size: 18px;
+          cursor: pointer;
+        }
+      }
     }
+  }
+}
+@keyframes play {
+  0% {
+    transform: translateY(10);
+  }
+  100% {
+    transform: translateY(75%);
   }
 }
 </style>
